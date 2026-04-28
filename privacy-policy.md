@@ -85,7 +85,7 @@ To exercise these, email **lazar.nikolic@litcoding.net** and include your **devi
 
 ## Children
 
-Litly is not directed at children under 13. We do not knowingly collect any data from children. If you believe a child has used the app, contact us and we'll remove any associated records.
+Litly is suitable for all ages. We don't collect any personally identifiable information from anyone — including children. The only thing tied to a user is the random anonymous device id described above. No name, email, phone number, or location is ever requested.
 
 ## International transfers
 
