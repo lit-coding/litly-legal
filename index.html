@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Litly</title>
+  <meta name="description" content="Spark your mind. Daily trivia, solo or with friends." />
+  <meta property="og:title" content="Join my Litly match" />
+  <meta property="og:description" content="Tap to open the match in Litly." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#5BB64C" />
+  <style>
+    :root {
+      --bg: #121212;
+      --surface: #1E1E1E;
+      --text: #F2F2F2;
+      --muted: #B0B0B0;
+      --accent: #5BB64C;
+      --accent-soft: #1E3A1B;
+      --border: #363636;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+    .card {
+      max-width: 440px;
+      width: 100%;
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .tagline {
+      color: var(--muted);
+      margin: 0 0 24px 0;
+      font-size: 14px;
+    }
+    .label {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 24px 0 8px 0;
+    }
+    .code {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      background: var(--accent-soft);
+      border: 1.5px solid var(--accent);
+      border-radius: 12px;
+      padding: 18px 16px;
+      color: var(--text);
+      font-family: 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+      word-break: break-all;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      margin-top: 18px;
+      transition: opacity 0.15s ease;
+    }
+    .btn:active { opacity: 0.7; }
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+    .hint a { color: var(--accent); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+    .footer {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .footer a { color: var(--muted); text-decoration: none; margin: 0 8px; }
+    .footer a:hover { color: var(--text); }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Litly</h1>
+    <p class="tagline" id="tagline">Spark your mind.</p>
+
+    <div id="match-block" class="hidden">
+      <div class="label">Match code</div>
+      <div class="code" id="code-text"></div>
+      <a href="#" class="btn" id="open-app">Open in Litly</a>
+      <p class="hint">
+        If the app didn't open, install Litly first, then tap the link again or
+        type the code into the <em>Join match</em> screen.
+      </p>
+    </div>
+
+    <div id="install-block">
+      <p class="hint">
+        Litly is a daily trivia game — solo or live duels with friends.
+        Coming soon to Android & iOS.
+      </p>
+    </div>
+
+    <div class="footer">
+      <a href="privacy-policy.md">Privacy</a>
+      <a href="terms-of-service.md">Terms</a>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var rawCode = (params.get('match') || params.get('code') || '').toUpperCase();
+      // Allowed characters per CODE_CHARS in src/lib/duel.ts (no I/O/0/1).
+      var code = rawCode.replace(/[^ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/g, '').slice(0, 6);
+
+      if (code.length === 6) {
+        document.getElementById('match-block').classList.remove('hidden');
+        document.getElementById('install-block').classList.add('hidden');
+        document.getElementById('code-text').textContent = code;
+        document.getElementById('tagline').textContent = "Tap to open the match.";
+
+        var deepLink = 'litly://match/' + code;
+        var btn = document.getElementById('open-app');
+        btn.setAttribute('href', deepLink);
+
+        // Best-effort auto-launch on touch devices. Most browsers will silently
+        // ignore the redirect if the app isn't installed; the user can tap the
+        // button to retry. Don't auto-launch on desktop — useless there.
+        var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        if (isTouch) {
+          // Small delay so the page can paint first.
+          setTimeout(function () {
+            window.location.href = deepLink;
+          }, 350);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
